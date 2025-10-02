@@ -1,0 +1,19 @@
+{
+  "network": "hardhat",
+  "chainId": "31337",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "timestamp": "2025-10-02T16:50:39.548Z",
+  "contracts": {
+    "KYCRegistry": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "RealEstateToken": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+    "PropertyNFT": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+  },
+  "tokenInfo": {
+    "name": "Real Estate Share",
+    "symbol": "RES",
+    "totalSupply": "1000.0",
+    "propertyAddress": "123 Avenue des Champs-Élysées, Paris, France",
+    "propertyValue": "50000000",
+    "totalShares": "1000"
+  }
+}
