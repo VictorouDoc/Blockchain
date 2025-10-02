@@ -1,22 +1,89 @@
-# Node modules
-/node_modules
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
 
-# Compilation output
-/dist
+# Hardhat
+cache/
+artifacts/
+typechain/
+typechain-types/
 
-# pnpm deploy output
-/bundle
+# Deployments (keep the folder structure, ignore JSONs with sensitive data)
+deployments/*.json
+deployments/*/*.json
+!deployments/.gitkeep
 
-# Hardhat Build Artifacts
-/artifacts
+# Coverage
+coverage/
+coverage.json
+*.lcov
 
-# Hardhat compilation (v2) support directory
-/cache
+# Environment Variables (CRITICAL - NEVER COMMIT THESE)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
 
-# Typechain output
-/types
+# Private Keys & Secrets (EXTRA PROTECTION)
+*.key
+*.pem
+secrets.json
+mnemonic.txt
 
-# Hardhat coverage reports
-/coverage
+# Hardhat Ignition
+ignition/deployments/chain-*/
+ignition/deployments/*/artifacts/
+ignition/deployments/*/journal.jsonl
 
-/.env
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.fleet/
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+dist/
+build/
+
+# Testing
+.nyc_output
+
+# Misc
+.cache
+*.seed
+*.pid
+*.pid.lock
+.temp/
+.tmp/
+
+# Hardhat Gas Reporter
+gas-report.txt
+
+# Tenderly
+.tenderly/
