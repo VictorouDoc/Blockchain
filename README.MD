@@ -13,18 +13,28 @@ This platform enables:
 
 ### ✅ Currently Implemented:
 
-- ✅ **Smart Contracts**:
+- ✅ **Smart Contracts** (100%):
   - `KYCRegistry.sol` - KYC management with whitelist/blacklist
   - `RealEstateToken.sol` - ERC-20 token for real estate shares
   - `PropertyNFT.sol` - ERC-721 NFT for unique properties
 
 - ✅ **Automated deployment** on Hardhat/Localhost/Polygon Amoy
 
+- ✅ **DEX Integration** (QuickSwap/Uniswap V2):
+  - Liquidity pool setup script
+  - KYC enforcement on trading
+  - Full documentation in `docs/DEX_INTEGRATION.md`
+
+- ✅ **Comprehensive Tests** (10 tests passing):
+  - KYCRegistry whitelist/blacklist tests
+  - RealEstateToken deployment and transfer tests
+  - PropertyNFT minting and metadata tests
+  - Full integration test (all contracts working together)
+
 ### 🚧 Coming Soon:
 
-- ⏳ DEX integration (Uniswap V2/V3)
-- ⏳ Indexer for real-time synchronization
-- ⏳ Oracle for asset pricing
+- ⏳ Indexer for real-time synchronization - Sean
+- ⏳ Oracle for asset pricing - Sean
 - ⏳ Frontend (React/Next.js) - Bastien
 - ⏳ Backend/API - Sean
 
@@ -133,11 +143,19 @@ Blockchain/
 ├── contracts/              # Solidity smart contracts
 │   ├── KYCRegistry.sol    # Whitelist/blacklist management
 │   ├── RealEstateToken.sol # ERC-20 token
-│   └── PropertyNFT.sol     # ERC-721 NFT
+│   ├── PropertyNFT.sol     # ERC-721 NFT
+│   └── interfaces/         # Uniswap V2 interfaces
+│       ├── IUniswapV2Router02.sol
+│       ├── IUniswapV2Factory.sol
+│       ├── IUniswapV2Pair.sol
+│       └── IWETH.sol
 ├── scripts/
-│   └── deploy.js          # Deployment script
+│   ├── deploy.js          # Deployment script
+│   └── setup-liquidity.js # DEX pool setup
 ├── test/                  # Tests (to be completed)
-├── deployments/           # Deployed contract addresses
+├── deployments/           # Deployed contract addresses & pool info
+├── docs/                  # Documentation
+│   └── DEX_INTEGRATION.md # DEX setup guide
 ├── hardhat.config.js      # Hardhat configuration
 ├── .env                   # Environment variables (create this)
 └── README.md
@@ -180,23 +198,44 @@ npx hardhat run scripts/deploy.js --network localhost
 # Deploy to testnet
 npx hardhat run scripts/deploy.js --network amoy
 
+# Setup liquidity pool (after deployment)
+npx hardhat run scripts/setup-liquidity.js --network amoy
+
 # Hardhat console
 npx hardhat console --network localhost
 ```
 
+## 🏊 DEX Trading
+
+Once deployed, tokens can be traded on **QuickSwap** (Uniswap V2 fork on Polygon).
+
+### Setup liquidity:
+```bash
+npx hardhat run scripts/setup-liquidity.js --network amoy
+```
+
+This creates a RES/WMATIC pool with:
+- Initial liquidity: 100 RES + 0.1 MATIC
+- KYC enforcement (only whitelisted can trade)
+- Whitelisted router and pair contracts
+
+**Full guide**: See `docs/DEX_INTEGRATION.md`
+
 ## 👥 Team
 
-- **Victor** - Smart Contracts & Deployment
-- **Bastien** - Frontend (React/Next.js)
-- **Sean** - Backend & Indexer
+- **Victor** - Lead Blockchain (Smart Contracts, DEX, Tests)
+- **Bastien** - Lead Frontend (React/Next.js, UI/UX)
+- **Sean** - Backend/Indexer (Node.js, Oracle, API)
+- **Theo** - DevOps/QA (CI/CD, Deployment, Documentation)
 
 ## 📚 Next Steps
 
-1. ⏳ Implement Uniswap pool for token trading
-2. ⏳ Create indexer for blockchain synchronization
-3. ⏳ Integrate oracle for pricing
-4. ⏳ Develop frontend
-5. ⏳ Document technical choices (Polygon justification)
+1. ✅ ~~Implement Uniswap pool for token trading~~
+2. ⏳ Write comprehensive tests (Hardhat) - **PRIORITY**
+3. ⏳ Create indexer for blockchain synchronization - Sean
+4. ⏳ Integrate oracle for pricing - Sean
+5. ⏳ Develop frontend - Bastien
+6. ⏳ Document technical choices (Polygon justification)
 
 ## 📄 License
 

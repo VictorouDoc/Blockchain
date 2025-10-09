@@ -1,5 +1,6 @@
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-verify";
+import "@nomicfoundation/hardhat-ignition";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -20,13 +21,14 @@ export default {
   },
   networks: {
     hardhat: {
-      chainId: 31337,
+      type: "edr-simulated"
     },
     localhost: {
       url: "http://127.0.0.1:8545",
       chainId: 31337,
     },
     amoy: {
+      type: "http",
       url: AMOY_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 80002,
@@ -57,5 +59,8 @@ export default {
   gasReporter: {
     enabled: true,
     currency: "USD",
+  },
+  mocha: {
+    timeout: 40000,
   },
 };

@@ -1,5 +1,4 @@
 import hre from "hardhat";
-import { ethers } from "ethers";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -8,32 +7,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function main() {
-  // Get provider from hardhat network
-  const provider = hre.network.provider ?
-    new ethers.BrowserProvider(hre.network.provider) :
-    new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+  // Get ethers from hre
+  const ethers = hre.ethers;
 
-  // Get signer (for hardhat network, use the first default account)
-  const deployer = await provider.getSigner(0);
+  // Get signer from hardhat (works for all networks including amoy)
+  const [deployer] = await ethers.getSigners();
 
-  const networkName = hre.network.name || hre.config.defaultNetwork || "hardhat";
+  const networkName = hre.network.name;
   console.log("🚀 Début du déploiement sur", networkName);
   console.log("==========================================\n");
 
   console.log("Déploiement avec le compte:", deployer.address);
 
-  const balance = await provider.getBalance(deployer.address);
-  console.log("Balance du compte:", ethers.formatEther(balance), "ETH\n");
-
-  // Get contract factory using artifacts
-  const getContractFactory = async (contractName) => {
-    const artifact = await hre.artifacts.readArtifact(contractName);
-    return new ethers.ContractFactory(artifact.abi, artifact.bytecode, deployer);
-  };
+  const balance = await ethers.provider.getBalance(deployer.address);
+  console.log("Balance du compte:", ethers.formatEther(balance), "POL\n");
 
   // 1. Déployer KYCRegistry
   console.log("📋 Déploiement de KYCRegistry...");
-  const KYCRegistry = await getContractFactory("KYCRegistry");
+  const KYCRegistry = await ethers.getContractFactory("KYCRegistry");
   const kycRegistry = await KYCRegistry.deploy();
   await kycRegistry.waitForDeployment();
   const kycAddress = await kycRegistry.getAddress();
@@ -46,7 +37,7 @@ async function main() {
 
   // 2. Déployer RealEstateToken
   console.log("🏠 Déploiement de RealEstateToken...");
-  const RealEstateToken = await getContractFactory("RealEstateToken");
+  const RealEstateToken = await ethers.getContractFactory("RealEstateToken");
   const token = await RealEstateToken.deploy(
     "Real Estate Share",
     "RES",
@@ -62,7 +53,7 @@ async function main() {
 
   // 3. Déployer PropertyNFT
   console.log("🖼️  Déploiement de PropertyNFT...");
-  const PropertyNFT = await getContractFactory("PropertyNFT");
+  const PropertyNFT = await ethers.getContractFactory("PropertyNFT");
   const nft = await PropertyNFT.deploy(kycAddress);
   await nft.waitForDeployment();
   const nftAddress = await nft.getAddress();
@@ -84,7 +75,7 @@ async function main() {
   console.log("✅ NFT #0 minté au deployer\n");
 
   // Sauvegarder les adresses des contrats
-  const network = await provider.getNetwork();
+  const network = await ethers.provider.getNetwork();
   const deploymentInfo = {
     network: networkName,
     chainId: network.chainId.toString(),
