@@ -1,0 +1,30 @@
+{
+  "name": "real-estate-backend",
+  "version": "1.0.0",
+  "description": "Oracle and Indexer services for Real Estate Tokenization Platform",
+  "type": "module",
+  "scripts": {
+    "oracle": "node oracle.js",
+    "indexer": "node indexer.js",
+    "dev": "concurrently \"npm run oracle\" \"npm run indexer\"",
+    "start": "node oracle.js"
+  },
+  "keywords": [
+    "oracle",
+    "indexer",
+    "blockchain",
+    "xrp",
+    "polygon"
+  ],
+  "author": "Real Estate Team",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2",
+    "ethers": "^6.15.0",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

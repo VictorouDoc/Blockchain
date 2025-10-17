@@ -7,14 +7,15 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
+// Load .env from root directory
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 async function main() {
   // Load contract artifacts
+  const kycArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../artifacts/contracts/KYCRegistry.sol/KYCRegistry.json"), "utf8"));
   const tokenArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../artifacts/contracts/RealEstateToken.sol/RealEstateToken.json"), "utf8"));
   const nftArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../artifacts/contracts/PropertyNFT.sol/PropertyNFT.json"), "utf8"));
-
-  console.log("🚀 Déploiement des contrats restants sur Polygon Amoy\n");
+  console.log("🚀 Début du déploiement sur Polygon Amoy\n");
 
   // Setup provider and wallet
   const provider = new ethers.JsonRpcProvider(process.env.AMOY_RPC_URL);
@@ -24,9 +25,23 @@ async function main() {
   const balance = await provider.getBalance(wallet.address);
   console.log("Balance:", ethers.formatEther(balance), "POL\n");
 
-  // KYCRegistry déjà déployé !
-  const kycAddress = "0xc7B79aA94E94c0426005B44C23956Af428247403";
-  console.log("✅ KYCRegistry (déjà déployé):", kycAddress, "\n");
+  // 1. Deploy KYCRegistry
+  console.log("📋 Déploiement de KYCRegistry...");
+  const KYCRegistry = new ethers.ContractFactory(kycArtifact.abi, kycArtifact.bytecode, wallet);
+  const kycRegistry = await KYCRegistry.deploy();
+  await kycRegistry.waitForDeployment();
+  const kycAddress = await kycRegistry.getAddress();
+  console.log("✅ KYCRegistry:", kycAddress);
+
+  // Whitelist deployer
+  console.log("🔐 Whitelist du deployer...");
+  const whitelistTx = await kycRegistry.whitelist(wallet.address);
+  await whitelistTx.wait(); // Wait for confirmation
+  console.log("✅ Deployer whitelisté\n");
+
+  // Wait a bit for the blockchain to process
+  console.log("⏳ Attente de confirmation...");
+  await new Promise(resolve => setTimeout(resolve, 3000));
 
   // 2. Deploy RealEstateToken
   console.log("🏠 Déploiement de RealEstateToken...");
@@ -75,14 +90,6 @@ async function main() {
       KYCRegistry: kycAddress,
       RealEstateToken: tokenAddress,
       PropertyNFT: nftAddress
-    },
-    tokenInfo: {
-      name: "Real Estate Share",
-      symbol: "RES",
-      totalSupply: ethers.formatEther(await token.totalSupply()),
-      propertyAddress: await token.propertyAddress(),
-      propertyValue: (await token.propertyValue()).toString(),
-      totalShares: (await token.totalShares()).toString()
     }
   };
 
@@ -102,16 +109,12 @@ async function main() {
   console.log("  RealEstateToken: ", tokenAddress);
   console.log("  PropertyNFT:     ", nftAddress);
   console.log("\n💾 Sauvegardé dans:", filename);
-  console.log("\n🔗 Vérifie sur Polygonscan:");
-  console.log("  https://amoy.polygonscan.com/address/" + kycAddress);
-  console.log("  https://amoy.polygonscan.com/address/" + tokenAddress);
-  console.log("  https://amoy.polygonscan.com/address/" + nftAddress);
   console.log("\n💡 Partage ces adresses avec ton équipe !");
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("❌ Erreur:", error.message);
+    console.error("❌ Erreur:", error);
     process.exit(1);
   });

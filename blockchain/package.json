@@ -1,0 +1,39 @@
+{
+  "name": "blockchain-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts and deployment scripts for Real Estate Tokenization",
+  "type": "module",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:local": "hardhat run scripts/deploy-direct.js --network localhost",
+    "deploy:amoy": "hardhat run scripts/deploy-direct.js --network amoy",
+    "setup-liquidity": "node scripts/setup-liquidity-direct.js",
+    "clean": "hardhat clean"
+  },
+  "keywords": [
+    "blockchain",
+    "hardhat",
+    "solidity",
+    "real-estate",
+    "tokenization"
+  ],
+  "author": "Real Estate Team",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^4.0.1",
+    "@nomicfoundation/hardhat-ignition": "^3.0.3",
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^3.0.2",
+    "@types/node": "^22.18.8",
+    "chai": "^6.2.0",
+    "ethers": "^6.15.0",
+    "hardhat": "^3.0.6",
+    "typescript": "~5.8.0",
+    "viem": "^2.37.11"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "dotenv": "^17.2.3"
+  }
+}

@@ -8,7 +8,15 @@
       "Bash(npm install)",
       "Bash(npm install:*)",
       "Bash(cat:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(test:*)",
+      "WebSearch",
+      "Bash(timeout:*)",
+      "Bash(xargs ls:*)",
+      "Bash(tree:*)",
+      "Bash(git stash:*)",
+      "Bash(git mv:*)",
+      "Bash(npx hardhat compile:*)"
     ],
     "deny": [],
     "ask": []

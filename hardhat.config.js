@@ -52,9 +52,9 @@ export default {
   },
   paths: {
     sources: "./contracts",
-    tests: "./test",
-    cache: "./cache",
-    artifacts: "./artifacts",
+    tests: "./blockchain/test",
+    cache: "./blockchain/cache",
+    artifacts: "./blockchain/artifacts",
   },
   gasReporter: {
     enabled: true,

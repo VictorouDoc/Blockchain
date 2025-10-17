@@ -3,16 +3,18 @@ node_modules/
 .pnp
 .pnp.js
 
-# Hardhat
-cache/
-artifacts/
-typechain/
-typechain-types/
+# Hardhat (blockchain folder)
+blockchain/cache/
+blockchain/artifacts/
+blockchain/typechain/
+blockchain/typechain-types/
+blockchain/node_modules/
+blockchain/package-lock.json
 
 # Deployments (keep the folder structure, ignore JSONs with sensitive data)
-deployments/*.json
-deployments/*/*.json
-!deployments/.gitkeep
+blockchain/deployments/*.json
+blockchain/deployments/*/*.json
+!blockchain/deployments/.gitkeep
 
 # Coverage
 coverage/
@@ -87,3 +89,16 @@ gas-report.txt
 
 # Tenderly
 .tenderly/
+
+# Claude Code
+.claude/
+
+# Backend dependencies
+backend/node_modules/
+backend/package-lock.json
+
+# Frontend dependencies
+frontend/node_modules/
+frontend/package-lock.json
+frontend/dist/
+frontend/build/
