@@ -6,6 +6,7 @@ import { http } from 'viem'
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@rainbow-me/rainbowkit/styles.css'
+import './index.css'
 import App from './App'
 
 const projectId = import.meta.env.VITE_WC_PROJECT_ID

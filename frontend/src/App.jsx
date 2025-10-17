@@ -22,7 +22,7 @@ function App() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-3 py-1.5 rounded-md transition-colors ${activeTab===tab ? 'bg-neutral-800 text-white' : 'text-neutral-400 hover:text-white hover:bg-neutral-800'}`}
+                  className={`tab-pill ${activeTab===tab ? 'tab-active' : 'tab-inactive'}`}
                 >
                   {tab === 'portfolio' && 'Portfolio'}
                   {tab === 'token' && 'Tokenisation'}

@@ -22,7 +22,7 @@ export default function KYCStatus() {
   const { data: approved, isLoading, error, refetch } = useReadContract({
     address: kycRegistry?.address,
     abi: kycRegistry?.abi,
-    functionName: 'isApproved',
+    functionName: 'isAuthorized',
     args: [targetAddress],
     query: { enabled: canQuery },
   })
@@ -39,6 +39,11 @@ export default function KYCStatus() {
           <h2 className="text-lg font-semibold mb-1">KYC</h2>
           <p className="text-xs text-neutral-400">Réseau: {chain?.name ?? '—'}</p>
         </div>
+        {canQuery && (
+          <span className={`badge ${approved ? 'border-emerald-700 text-emerald-300 bg-emerald-900/30' : 'border-amber-800 text-amber-300 bg-amber-900/20'}`}>
+            {approved ? 'Whitelisted' : 'Non whitelisted'}
+          </span>
+        )}
       </div>
 
       {!hasKycAddress && (
@@ -48,7 +53,7 @@ export default function KYCStatus() {
       )}
       {!hasKycAbi && (
         <div className="mt-2 text-sm text-amber-400 bg-amber-500/10 border border-amber-800 rounded-md p-3">
-          ABI KYC manquante. Ajoute l’ABI dans <code className="font-mono">useContracts.js</code> (fonction <span className="font-semibold">isApproved(address)</span> attendue).
+          ABI KYC manquante. Ajoute l’ABI dans <code className="font-mono">useContracts.js</code> (fonction <span className="font-semibold">isAuthorized(address)</span> attendue).
         </div>
       )}
 
@@ -79,13 +84,33 @@ export default function KYCStatus() {
         </button>
       </form>
 
-      <div className="mt-4 text-sm text-neutral-300">
-        Statut:{' '}
-        <span className="font-semibold">
-          {!canQuery && '—'}
-          {canQuery && isLoading && 'Chargement…'}
-          {canQuery && !isLoading && (error ? 'Erreur' : approved ? 'Validé' : 'Non validé')}
-        </span>
+      <div className="mt-4 grid sm:grid-cols-3 gap-3">
+        <div className="stat">
+          <div>
+            <div className="stat-title">Adresse</div>
+            <div className="stat-value text-sm">{targetAddress?.slice(0,6)}...{targetAddress?.slice(-4)}</div>
+          </div>
+        </div>
+        <div className="stat">
+          <div>
+            <div className="stat-title">Statut</div>
+            <div className="stat-value text-sm">
+              {!canQuery && '—'}
+              {canQuery && isLoading && <span className="skeleton inline-block h-4 w-20" />}
+              {canQuery && !isLoading && (error ? 'Erreur' : approved ? 'Validé' : 'Non validé')}
+            </div>
+          </div>
+        </div>
+        <div className="stat">
+          <div>
+            <div className="stat-title">Action</div>
+            <div className="flex gap-2">
+              <button className="btn btn-secondary" disabled>
+                Request KYC (demo)
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )
