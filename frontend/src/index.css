@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base app styles */
+html, body, #root { height: 100%; }
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-neutral-950 text-neutral-100 antialiased;
+  }
+  h1 { @apply text-3xl font-semibold; }
+  h2 { @apply text-xl font-semibold; }
+}
+
+@layer components {
+  .container-app { @apply max-w-6xl mx-auto px-4; }
+  .card { @apply rounded-lg border border-neutral-800 bg-neutral-900 shadow-card; }
+  .card-body { @apply p-4; }
+  .btn { @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors; }
+  .btn-primary { @apply bg-emerald-600 hover:bg-emerald-700 text-white; }
+  .btn-secondary { @apply bg-neutral-700 hover:bg-neutral-600 text-white; }
+  .btn-outline { @apply border border-neutral-700 text-neutral-200 hover:bg-neutral-800; }
+  .input { @apply w-full bg-neutral-800 rounded-md px-3 py-2 text-sm placeholder:text-neutral-500 outline-none border border-transparent focus:border-neutral-600; }
+  .label { @apply block text-xs text-neutral-400 mb-1; }
+  .muted { @apply text-neutral-400 text-sm; }
+  .badge { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-neutral-800 text-neutral-300 border border-neutral-700; }
+}
+
+@layer utilities {
+  .section { @apply card card-body; }
+}
