@@ -7,7 +7,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
+// Load .env from root directory
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 // DonaSwap V2 addresses on Polygon Amoy (Uniswap V2 fork)
 const DONASWAP_ROUTER = "0x6E682B51F8bb67294B522b75a1E79dDd4502cc94";

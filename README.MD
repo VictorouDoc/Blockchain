@@ -63,8 +63,19 @@ cd Blockchain
 ```
 
 ### 2. Install dependencies
+
+**Blockchain (Hardhat + Smart Contracts):**
 ```bash
+cd blockchain
 npm install
+cd ..
+```
+
+**Backend (Oracle + Indexer):**
+```bash
+cd backend
+npm install
+cd ..
 ```
 
 ### 3. Environment configuration (for testnet)
@@ -82,13 +93,14 @@ AMOY_RPC_URL=https://rpc-amoy.polygon.technology
 To compile all Solidity smart contracts:
 
 ```bash
+cd blockchain
 npx hardhat compile
 ```
 
 This will:
 - Compile all `.sol` files in `contracts/`
-- Generate artifacts (ABI + bytecode) in `artifacts/`
-- Create cache in `cache/`
+- Generate artifacts (ABI + bytecode) in `blockchain/artifacts/`
+- Create cache in `blockchain/cache/`
 - Display compilation errors/warnings
 
 ## 🧪 Local Testing
@@ -156,20 +168,28 @@ Blockchain/
 │   ├── RealEstateToken.sol # ERC-20 token
 │   ├── PropertyNFT.sol     # ERC-721 NFT
 │   └── interfaces/         # Uniswap V2 interfaces
-├── backend/                # Backend services
+├── blockchain/             # Blockchain scripts & deployment
+│   ├── scripts/
+│   │   ├── deploy-direct.js        # Direct deployment (ethers.js)
+│   │   └── setup-liquidity-direct.js # DEX pool setup
+│   ├── test/
+│   │   └── SmartContracts.test.js  # Unit tests (10 passing)
+│   ├── deployments/        # Deployed contract addresses
+│   ├── hardhat.config.js   # Hardhat configuration
+│   └── package.json        # Hardhat dependencies
+├── backend/                # Backend services (Oracle + Indexer)
 │   ├── oracle.js          # Price oracle service (port 3001)
 │   ├── indexer.js         # Blockchain indexer (port 3002)
 │   ├── package.json       # Backend dependencies
 │   └── README.md          # Backend documentation
-├── scripts/
-│   ├── deploy.js          # Deployment script
-│   ├── deploy-direct.js   # Direct deployment (ethers.js)
-│   └── setup-liquidity-direct.js # DEX pool setup
-├── test/                  # Unit tests (10 tests passing)
-├── deployments/           # Deployed contract addresses
-├── hardhat.config.js      # Hardhat configuration
-├── CONTEXT.md             # Session tracking
+├── frontend/               # React app (will be added after merge)
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js
 ├── .env                   # Environment variables (create this)
+├── .gitignore
+├── CONTEXT.md             # Session tracking
 └── README.md              # This file
 ```
 
@@ -197,6 +217,8 @@ Blockchain/
 ### Smart Contracts
 
 ```bash
+cd blockchain
+
 # Compile contracts
 npx hardhat compile
 
@@ -207,10 +229,10 @@ npx hardhat clean
 npx hardhat test
 
 # Deploy to testnet
-node scripts/deploy-direct.js
+npm run deploy:amoy
 
 # Setup liquidity pool
-node scripts/setup-liquidity-direct.js
+npm run setup-liquidity
 ```
 
 ### Backend Services
