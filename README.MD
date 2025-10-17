@@ -18,12 +18,24 @@ This platform enables:
   - `RealEstateToken.sol` - ERC-20 token for real estate shares
   - `PropertyNFT.sol` - ERC-721 NFT for unique properties
 
-- ✅ **Automated deployment** on Hardhat/Localhost/Polygon Amoy
+- ✅ **Automated deployment** on Polygon Amoy testnet
 
-- ✅ **DEX Integration** (QuickSwap/Uniswap V2):
-  - Liquidity pool setup script
-  - KYC enforcement on trading
-  - Full documentation in `docs/DEX_INTEGRATION.md`
+- ✅ **DEX Integration** (DonaSwap V2 on Amoy):
+  - Pair created: RES/WMATIC (`0x34b250940c88764c72Ab5DE28AEA9C6DfFaa1c8C`)
+  - Router and pair whitelisted for KYC compliance
+  - Infrastructure ready (liquidity pending testnet limitations)
+
+- ✅ **Oracle Service** (Real-time pricing):
+  - XRP/USD price from CoinGecko API
+  - RES token price calculation
+  - REST API on port 3001
+  - Auto-updates every 60 seconds
+
+- ✅ **Indexer Service** (Blockchain synchronization):
+  - Monitors KYC events (Whitelist/Blacklist)
+  - Tracks RES token transfers
+  - REST API on port 3002
+  - Syncs every 60 seconds
 
 - ✅ **Comprehensive Tests** (10 tests passing):
   - KYCRegistry whitelist/blacklist tests
@@ -31,12 +43,11 @@ This platform enables:
   - PropertyNFT minting and metadata tests
   - Full integration test (all contracts working together)
 
-### 🚧 Coming Soon:
+### 🚧 Remaining (Optional):
 
-- ⏳ Indexer for real-time synchronization - Sean
-- ⏳ Oracle for asset pricing - Sean
 - ⏳ Frontend (React/Next.js) - Bastien
-- ⏳ Backend/API - Sean
+- ⏳ PropertyNFT deployment (waiting for more POL)
+- ⏳ DEX liquidity addition (testnet limitations)
 
 ## 🚀 Installation & Setup
 
@@ -145,20 +156,21 @@ Blockchain/
 │   ├── RealEstateToken.sol # ERC-20 token
 │   ├── PropertyNFT.sol     # ERC-721 NFT
 │   └── interfaces/         # Uniswap V2 interfaces
-│       ├── IUniswapV2Router02.sol
-│       ├── IUniswapV2Factory.sol
-│       ├── IUniswapV2Pair.sol
-│       └── IWETH.sol
+├── backend/                # Backend services
+│   ├── oracle.js          # Price oracle service (port 3001)
+│   ├── indexer.js         # Blockchain indexer (port 3002)
+│   ├── package.json       # Backend dependencies
+│   └── README.md          # Backend documentation
 ├── scripts/
 │   ├── deploy.js          # Deployment script
-│   └── setup-liquidity.js # DEX pool setup
-├── test/                  # Tests (to be completed)
-├── deployments/           # Deployed contract addresses & pool info
-├── docs/                  # Documentation
-│   └── DEX_INTEGRATION.md # DEX setup guide
+│   ├── deploy-direct.js   # Direct deployment (ethers.js)
+│   └── setup-liquidity-direct.js # DEX pool setup
+├── test/                  # Unit tests (10 tests passing)
+├── deployments/           # Deployed contract addresses
 ├── hardhat.config.js      # Hardhat configuration
+├── CONTEXT.md             # Session tracking
 ├── .env                   # Environment variables (create this)
-└── README.md
+└── README.md              # This file
 ```
 
 ## 📝 Smart Contract Architecture
@@ -182,6 +194,8 @@ Blockchain/
 
 ## 🛠️ Useful Commands
 
+### Smart Contracts
+
 ```bash
 # Compile contracts
 npx hardhat compile
@@ -192,18 +206,41 @@ npx hardhat clean
 # Run tests
 npx hardhat test
 
-# Deploy locally
-npx hardhat run scripts/deploy.js --network localhost
-
 # Deploy to testnet
-npx hardhat run scripts/deploy.js --network amoy
+node scripts/deploy-direct.js
 
-# Setup liquidity pool (after deployment)
-npx hardhat run scripts/setup-liquidity.js --network amoy
-
-# Hardhat console
-npx hardhat console --network localhost
+# Setup liquidity pool
+node scripts/setup-liquidity-direct.js
 ```
+
+### Backend Services
+
+```bash
+# Install backend dependencies
+cd backend && npm install
+
+# Start Oracle service (port 3001)
+cd backend && npm run oracle
+
+# Start Indexer service (port 3002)
+cd backend && npm run indexer
+
+# Start both services
+cd backend && npm run dev
+```
+
+### API Endpoints
+
+**Oracle (http://localhost:3001)**
+- `GET /api/price/xrp` - XRP/USD price
+- `GET /api/price/res` - RES token price
+- `GET /api/health` - Service health
+
+**Indexer (http://localhost:3002)**
+- `GET /api/events/kyc` - KYC events
+- `GET /api/events/transfers` - Transfer events
+- `GET /api/stats` - Blockchain statistics
+- `GET /api/health` - Service health
 
 ## 🏊 DEX Trading
 

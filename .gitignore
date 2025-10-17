@@ -87,3 +87,10 @@ gas-report.txt
 
 # Tenderly
 .tenderly/
+
+# Claude Code
+.claude/
+
+# Backend dependencies
+backend/node_modules/
+backend/package-lock.json
