@@ -45,7 +45,7 @@ function App() {
       </main>
 
       <footer className="text-center text-neutral-500 text-xs py-6">
-        Sepolia testnet • Uniswap integration (soon) • Built with Wagmi/RainbowKit
+        {(import.meta.env.VITE_NETWORK || 'sepolia')} • Uniswap/QuickSwap integration • Built with Wagmi/RainbowKit
       </footer>
     </div>
   )

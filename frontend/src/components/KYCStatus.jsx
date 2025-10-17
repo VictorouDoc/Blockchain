@@ -48,7 +48,7 @@ export default function KYCStatus() {
 
       {!hasKycAddress && (
         <div className="mt-4 text-sm text-amber-400 bg-amber-500/10 border border-amber-800 rounded-md p-3">
-          Adresse du contrat KYC manquante. Renseigne VITE_KYC_REGISTRY_ADDRESS dans .env (Sepolia).
+          Adresse du contrat KYC manquante. Renseigne VITE_KYC_REGISTRY_ADDRESS dans votre fichier .env.
         </div>
       )}
       {!hasKycAbi && (

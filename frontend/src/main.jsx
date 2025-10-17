@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { WagmiProvider } from 'wagmi'
-import { sepolia } from 'wagmi/chains'
+import { sepolia, polygonAmoy } from 'wagmi/chains'
 import { http } from 'viem'
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -38,11 +38,17 @@ VITE_WC_PROJECT_ID=ton_project_id
     </React.StrictMode>
   )
 } else {
+  const target = (import.meta.env.VITE_NETWORK || 'sepolia').toLowerCase()
+  const chains = target === 'amoy' ? [polygonAmoy] : [sepolia]
+  const transports = target === 'amoy'
+    ? { [polygonAmoy.id]: http(import.meta.env.VITE_AMOY_RPC_URL) }
+    : { [sepolia.id]: http() }
+
   const config = getDefaultConfig({
     appName: 'RealEstate DApp',
     projectId,
-    chains: [sepolia],
-    transports: { [sepolia.id]: http() },
+    chains,
+    transports,
     ssr: false,
   })
 

@@ -1,8 +1,10 @@
 import { useAccount } from 'wagmi'
+import { useResPrice } from '../hooks/useOracle'
 
 // Placeholder portfolio; in real app, fetch from backend/indexer
 export default function Portfolio() {
   const { address, isConnected } = useAccount()
+  const { data: resPrice, isLoading: priceLoading, error: priceError } = useResPrice()
 
   return (
     <section className="section">
@@ -31,8 +33,14 @@ export default function Portfolio() {
         <div className="stat">
           <div>
             <div className="stat-title">Valeur estimée</div>
-            <div className="stat-value">—</div>
-            <div className="stat-desc">Basée sur oracle (à venir)</div>
+            <div className="stat-value">
+              {priceLoading && <span className="skeleton inline-block h-5 w-24" />}
+              {!priceLoading && priceError && <span className="text-amber-400">Indispo</span>}
+              {!priceLoading && !priceError && resPrice?.price?.usd != null && (
+                `$${Number(resPrice.price.usd).toLocaleString()}`
+              )}
+            </div>
+            <div className="stat-desc">Oracle {resPrice?.lastUpdate ? `• ${new Date(resPrice.lastUpdate).toLocaleTimeString()}` : ''}</div>
           </div>
         </div>
       </div>
