@@ -1,10 +1,31 @@
-import { useAccount } from 'wagmi'
+import { useAccount, useReadContract } from 'wagmi'
 import { useResPrice } from '../hooks/useOracle'
+import { useContracts } from '../hooks/useContracts'
+import { formatUnits } from 'viem'
 
-// Placeholder portfolio; in real app, fetch from backend/indexer
 export default function Portfolio() {
   const { address, isConnected } = useAccount()
   const { data: resPrice, isLoading: priceLoading, error: priceError } = useResPrice()
+  const { realEstateToken, propertyNft } = useContracts()
+
+  // Fetch RES token balance
+  const { data: resBalance, isLoading: resLoading } = useReadContract({
+    address: realEstateToken.address,
+    abi: realEstateToken.abi,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: { enabled: isConnected && !!address && !!realEstateToken.address },
+  })
+
+  // Fetch NFT count (totalMinted for simplicity, in prod should be balanceOf)
+  const { data: nftCount, isLoading: nftLoading } = useReadContract({
+    address: propertyNft.address,
+    abi: propertyNft.abi,
+    functionName: 'totalMinted',
+    query: { enabled: propertyNft.address !== '0x0000000000000000000000000000000000000000' },
+  })
+
+  const formattedResBalance = resBalance ? formatUnits(resBalance, 18) : '0'
 
   return (
     <section className="section">
@@ -19,14 +40,21 @@ export default function Portfolio() {
         <div className="stat">
           <div>
             <div className="stat-title">Balance RES</div>
-            <div className="stat-value">—</div>
+            <div className="stat-value">
+              {!isConnected && '—'}
+              {isConnected && resLoading && <span className="skeleton inline-block h-5 w-24" />}
+              {isConnected && !resLoading && Number(formattedResBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            </div>
             <div className="stat-desc">Tokenisé</div>
           </div>
         </div>
         <div className="stat">
           <div>
             <div className="stat-title">NFTs</div>
-            <div className="stat-value">—</div>
+            <div className="stat-value">
+              {nftLoading && <span className="skeleton inline-block h-5 w-16" />}
+              {!nftLoading && (nftCount?.toString() || '0')}
+            </div>
             <div className="stat-desc">Property Certificates</div>
           </div>
         </div>

@@ -54,10 +54,15 @@ async function fetchXRPPrice() {
 /**
  * Calculate Real Estate Token price in USD
  * Based on property value and XRP price
+ *
+ * 💡 POUR MODIFIER LE PRIX RES:
+ * - Change propertyValueUSD (ex: 750000 pour $750,000)
+ * - Change totalShares (ex: 2000 pour 2000 tokens)
+ * - Prix RES = propertyValueUSD / totalShares
  */
 function calculateRESPrice() {
-  const propertyValueUSD = 500000; // $500,000 property
-  const totalShares = 1000; // 1000 RES tokens
+  const propertyValueUSD = 500000; // $500,000 property (change ici pour modifier)
+  const totalShares = 1000; // 1000 RES tokens (change ici pour modifier)
   const pricePerToken = propertyValueUSD / totalShares; // $500 per RES
 
   return {
