@@ -1,12 +1,13 @@
 {
   "network": "amoy",
   "chainId": 80002,
-  "timestamp": "2025-10-18T14:00:00.000Z",
+  "timestamp": "2025-10-19T14:57:41.761Z",
   "deployer": "0x5729471EE51FaEaF31fc093fd99E67f28429bf00",
   "contracts": {
     "KYCRegistry": "0x9289e12AEC53F3794608aB3C15f4103Ddf30A9E4",
     "RealEstateToken": "0xC6D48cfd979d03bF5261944DfF3ab81e17207C00",
-    "PropertyNFT": "0x0000000000000000000000000000000000000000"
+    "PropertyNFT": "0x0000000000000000000000000000000000000000",
+    "TokenFactory": "0xE480c91334495eED23f62b078aaF1894d987A4A6"
   },
   "dex": {
     "router": "0x6E682B51F8bb67294B522b75a1E79dDd4502cc94",

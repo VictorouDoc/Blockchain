@@ -7,7 +7,9 @@ dotenv.config();
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x0000000000000000000000000000000000000000000000000000000000000000";
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 const AMOY_RPC_URL = process.env.AMOY_RPC_URL || "https://rpc-amoy.polygon.technology";
+const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com";
 
 export default {
   solidity: {
@@ -34,10 +36,18 @@ export default {
       chainId: 80002,
       gasPrice: 50000000000,
     },
+    sepolia: {
+      type: "http",
+      url: SEPOLIA_RPC_URL,
+      accounts: [PRIVATE_KEY],
+      chainId: 11155111,
+      gasPrice: "auto",
+    },
   },
   etherscan: {
     apiKey: {
       polygonAmoy: POLYGONSCAN_API_KEY,
+      sepolia: ETHERSCAN_API_KEY,
     },
     customChains: [
       {

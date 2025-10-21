@@ -65,27 +65,69 @@ export default function Portfolio() {
               {priceLoading && <span className="skeleton inline-block h-5 w-24" />}
               {!priceLoading && priceError && <span className="text-amber-400">Indispo</span>}
               {!priceLoading && !priceError && resPrice?.price?.usd != null && (
-                `$${Number(resPrice.price.usd).toLocaleString()}`
+                `$${(Number(formattedResBalance) * Number(resPrice.price.usd)).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
               )}
             </div>
-            <div className="stat-desc">Oracle {resPrice?.lastUpdate ? `• ${new Date(resPrice.lastUpdate).toLocaleTimeString()}` : ''}</div>
+            <div className="stat-desc">
+              {resPrice?.price?.usd && `$${Number(resPrice.price.usd).toLocaleString()}/RES`}
+              {resPrice?.lastUpdate && ` • ${new Date(resPrice.lastUpdate).toLocaleTimeString()}`}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-6">
-        <h3 className="text-sm text-neutral-400 mb-2">Derniers actifs</h3>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {[1,2,3].map((i) => (
-            <div key={i} className="card p-3">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-neutral-400">Asset #{i}</div>
-                <span className="badge">NFT</span>
-              </div>
-              <div className="mt-2 text-lg font-semibold">Property #{i}</div>
-              <div className="text-xs text-neutral-500">0x... tokenId {i-1}</div>
+      {/* Additional Info */}
+      <div className="mt-6 grid sm:grid-cols-2 gap-4">
+        <div className="card p-4">
+          <h3 className="text-sm font-semibold text-neutral-300 mb-3">RES Token Contract</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-neutral-400">Address</span>
+              <span className="text-xs font-mono text-neutral-200">
+                {realEstateToken.address?.slice(0, 6)}...{realEstateToken.address?.slice(-4)}
+              </span>
             </div>
-          ))}
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-neutral-400">Symbol</span>
+              <span className="text-xs font-semibold text-neutral-200">RES</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-neutral-400">Total Supply</span>
+              <span className="text-xs font-semibold text-neutral-200">1,000 RES</span>
+            </div>
+            <a
+              href={`https://sepolia.etherscan.io/address/${realEstateToken.address}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-400 hover:text-blue-300 inline-block mt-2"
+            >
+              Voir sur Etherscan ↗
+            </a>
+          </div>
+        </div>
+
+        <div className="card p-4">
+          <h3 className="text-sm font-semibold text-neutral-300 mb-3">Property Details</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-neutral-400">Property Value</span>
+              <span className="text-xs font-semibold text-neutral-200">$500,000</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-neutral-400">Price per Share</span>
+              <span className="text-xs font-semibold text-neutral-200">
+                ${resPrice?.price?.usd ? Number(resPrice.price.usd).toLocaleString() : '500'}/RES
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-neutral-400">Location</span>
+              <span className="text-xs text-neutral-200">123 Main St, Paris</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-neutral-400">Network</span>
+              <span className="text-xs text-neutral-200">Sepolia Testnet</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

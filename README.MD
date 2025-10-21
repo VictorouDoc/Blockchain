@@ -1,300 +1,396 @@
-# 🏠 Tokenized Asset Management Platform
+# 🏠 Real Estate Tokenization Platform
 
-Real estate tokenization platform on Polygon (EVM-compatible blockchain).
+A complete blockchain platform for tokenizing real estate assets on **Ethereum Sepolia testnet** with KYC compliance, DEX trading, and real-time pricing.
 
 ## 📋 Project Overview
 
 This platform enables:
-- **Tokenize real estate assets** as ERC-20 tokens (fractional shares) and ERC-721 NFTs (unique properties)
-- **Manage KYC compliance** with on-chain whitelist/blacklist
-- **Trade tokens** between whitelisted users
-- **Track transactions** in real-time via indexer
-- **Get price feeds** via decentralized oracle
+- **Tokenize real estate assets** as ERC-20 tokens (fractional ownership) and ERC-721 NFTs (property certificates)
+- **KYC compliance** with on-chain whitelist/blacklist registry
+- **DEX trading** via Uniswap V2 with automated market-making
+- **Real-time price oracle** for RES token valuation
+- **Blockchain indexer** for event tracking and analytics
+- **Modern web interface** with Web3 wallet integration
 
-### ✅ Currently Implemented:
+## ✅ Fully Implemented Features
 
-- ✅ **Smart Contracts** (100%):
-  - `KYCRegistry.sol` - KYC management with whitelist/blacklist
-  - `RealEstateToken.sol` - ERC-20 token for real estate shares
-  - `PropertyNFT.sol` - ERC-721 NFT for unique properties
+### Smart Contracts (Sepolia Testnet)
+- ✅ **KYCRegistry** (`0xFfc2bd2AbC7b4e86F306F659e2Caf219744e30a2`)
+  - Whitelist/blacklist management
+  - Access control for compliant trading
 
-- ✅ **Automated deployment** on Polygon Amoy testnet
+- ✅ **RealEstateToken (RES)** (`0x6cBf802Ba94639Bb74E64e883D9FCb80114F17EF`)
+  - ERC-20 token representing 1/1000th ownership of $500k property
+  - 1000 RES total supply (1 RES = $500 property value)
+  - KYC-enforced transfers
 
-- ✅ **DEX Integration** (DonaSwap V2 on Amoy):
-  - Pair created: RES/WMATIC (`0x34b250940c88764c72Ab5DE28AEA9C6DfFaa1c8C`)
-  - Router and pair whitelisted for KYC compliance
-  - Infrastructure ready (liquidity pending testnet limitations)
+- ✅ **PropertyNFT** (`0x28304461fb1e65EDDcb8998195B47EC770A447CD`)
+  - ERC-721 NFT for unique property certificates
+  - IPFS metadata support
 
-- ✅ **Oracle Service** (Real-time pricing):
-  - XRP/USD price from CoinGecko API
-  - RES token price calculation
-  - REST API on port 3001
+- ✅ **SimpleTokenFactory** (`0xF62643BD23124c7f279D5f2073956039ba44699C`)
+  - Factory for creating new ERC-20 and ERC-721 tokens
+
+### DEX Integration (Uniswap V2 on Sepolia)
+- ✅ **Liquidity Pool**: RES/WETH pair (`0x8DB5219a28376ff2bEd277459D6845EcF115f813`)
+- ✅ **Router**: Whitelisted for KYC compliance (`0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3`)
+- ✅ **Active liquidity**: 100 RES + 0.01 ETH
+- ✅ **Functional trading**: Swap ETH ↔ RES with live pricing
+
+### Backend Services
+- ✅ **Oracle Service** (Port 3001)
+  - Real-time RES token pricing via Uniswap V2 reserves
+  - XRP/USD reference price from CoinGecko
   - Auto-updates every 60 seconds
+  - REST API for price queries
 
-- ✅ **Indexer Service** (Blockchain synchronization):
+- ✅ **Indexer Service** (Port 3002)
   - Monitors KYC events (Whitelist/Blacklist)
   - Tracks RES token transfers
-  - REST API on port 3002
-  - Syncs every 60 seconds
+  - Syncs blockchain state every 60 seconds
+  - REST API for event queries
 
-- ✅ **Comprehensive Tests** (10 tests passing):
-  - KYCRegistry whitelist/blacklist tests
-  - RealEstateToken deployment and transfer tests
-  - PropertyNFT minting and metadata tests
-  - Full integration test (all contracts working together)
+### Frontend (React + RainbowKit + Wagmi)
+- ✅ **Modern UI** with purple crypto theme (Uniswap-style)
+- ✅ **Wallet integration** via RainbowKit (MetaMask, WalletConnect, etc.)
+- ✅ **Portfolio dashboard** with real-time balances and valuations
+- ✅ **Token creation** interface for ERC-20 and ERC-721
+- ✅ **DEX trading** interface with live swap functionality
+- ✅ **KYC status checker** for address verification
+- ✅ **Responsive design** with glassmorphism and gradients
 
-### 🚧 Remaining (Optional):
+### Testing & Quality
+- ✅ **Unit tests** for all contracts (10 tests passing)
+- ✅ **Integration tests** for end-to-end workflows
+- ✅ **Manual testing** completed on Sepolia testnet
 
-- ⏳ Frontend (React/Next.js) - Bastien
-- ⏳ PropertyNFT deployment (waiting for more POL)
-- ⏳ DEX liquidity addition (testnet limitations)
-
-## 🚀 Installation & Setup
+## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js v18+
-- Git
-- Metamask wallet (for testnet)
+- MetaMask wallet
+- Sepolia ETH (get from [Sepolia Faucet](https://sepoliafaucet.com/))
 
-### 1. Clone the repository
+### 1. Clone and Install
 ```bash
 git clone https://github.com/VictorouDoc/Blockchain.git
 cd Blockchain
+
+# Install blockchain dependencies
+cd blockchain && npm install && cd ..
+
+# Install backend dependencies
+cd backend && npm install && cd ..
+
+# Install frontend dependencies
+cd frontend && npm install && cd ..
 ```
 
-### 2. Install dependencies
+### 2. Environment Configuration
 
-**Blockchain (Hardhat + Smart Contracts):**
-```bash
-cd blockchain
-npm install
-cd ..
-```
-
-**Backend (Oracle + Indexer):**
-```bash
-cd backend
-npm install
-cd ..
-```
-
-### 3. Environment configuration (for testnet)
-Create a `.env` file at the root:
+**Root `.env`** (for blockchain deployment):
 ```bash
 PRIVATE_KEY=your_metamask_private_key
-POLYGONSCAN_API_KEY=your_polygonscan_api_key
-AMOY_RPC_URL=https://rpc-amoy.polygon.technology
+ETHERSCAN_API_KEY=your_etherscan_api_key
+SEPOLIA_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
 ```
 
-⚠️ **IMPORTANT**: Never commit the `.env` file (already in .gitignore)
-
-## 🔨 Compiling Contracts
-
-To compile all Solidity smart contracts:
-
+**Frontend `.env`** (already configured in `frontend/.env`):
 ```bash
-cd blockchain
-npx hardhat compile
+# WalletConnect
+VITE_WC_PROJECT_ID=922ffe9f4c90b8ee4d892f4df830abf9
+
+# Network
+VITE_NETWORK=sepolia
+VITE_SEPOLIA_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
+
+# Contract addresses
+VITE_KYC_REGISTRY_ADDRESS=0xFfc2bd2AbC7b4e86F306F659e2Caf219744e30a2
+VITE_ERC20_ADDRESS=0x6cBf802Ba94639Bb74E64e883D9FCb80114F17EF
+VITE_ERC721_ADDRESS=0x28304461fb1e65EDDcb8998195B47EC770A447CD
+VITE_TOKEN_FACTORY_ADDRESS=0xF62643BD23124c7f279D5f2073956039ba44699C
+
+# Uniswap V2 on Sepolia
+VITE_UNISWAP_ROUTER=0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3
+VITE_UNISWAP_FACTORY=0xF62c03E08ada871A0bEb309762E260a7a6a880E6
+VITE_WETH=0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14
+VITE_RES_WETH_PAIR=0x8DB5219a28376ff2bEd277459D6845EcF115f813
+
+# Backend services
+VITE_ORACLE_BASE_URL=http://localhost:3001
+VITE_INDEXER_BASE_URL=http://localhost:3002
 ```
 
-This will:
-- Compile all `.sol` files in `contracts/`
-- Generate artifacts (ABI + bytecode) in `blockchain/artifacts/`
-- Create cache in `blockchain/cache/`
-- Display compilation errors/warnings
+### 3. Run the Platform
 
-## 🧪 Local Testing
-
-### Option 1: Hardhat Network (in-memory - fast)
+**Terminal 1 - Backend Services:**
 ```bash
-npx hardhat run scripts/deploy.js --network hardhat
+cd backend
+npm run dev
 ```
-- Deploys contracts to a temporary network
-- Disappears after execution
-- Perfect for quick testing
+This starts:
+- Oracle on http://localhost:3001
+- Indexer on http://localhost:3002
 
-### Option 2: Hardhat Local Node (persistent)
-
-**Terminal 1 - Start local node:**
+**Terminal 2 - Frontend:**
 ```bash
-npx hardhat node
+cd frontend
+npm run dev
 ```
-This starts a local blockchain at `http://127.0.0.1:8545` with:
-- 20 test accounts with ETH
-- Real-time transaction display
-- Stays active until `Ctrl+C`
+Frontend available at http://localhost:5173
 
-**Terminal 2 - Deploy to localhost:**
-```bash
-npx hardhat run scripts/deploy.js --network localhost
-```
+### 4. Using the Platform
 
-Deployed contract addresses are saved in `deployments/`
-
-## 🌐 Deployment to Polygon Amoy (Testnet)
-
-### 1. Get test POL tokens
-- Go to [Polygon Faucet](https://faucet.polygon.technology/)
-- Enter your Metamask address
-- Receive free POL for Amoy testnet
-
-### 2. Configure your `.env`
-```bash
-PRIVATE_KEY=your_private_key_here
-POLYGONSCAN_API_KEY=your_api_key
-AMOY_RPC_URL=https://rpc-amoy.polygon.technology
-```
-
-### 3. Deploy to Amoy
-```bash
-npx hardhat run scripts/deploy.js --network amoy
-```
-
-The script will:
-1. Deploy `KYCRegistry`
-2. Deploy `RealEstateToken` (1000 shares of a property)
-3. Deploy `PropertyNFT`
-4. Whitelist the deployer
-5. Mint an example NFT
-6. Verify contracts on Polygonscan (after 30s)
-7. Save addresses to `deployments/amoy-timestamp.json`
+1. **Connect wallet** - Click "Connect Wallet" and select MetaMask (switch to Sepolia testnet)
+2. **Check KYC status** - Verify your address is whitelisted (contact admin if not)
+3. **View portfolio** - See your RES balance, NFT count, and estimated value
+4. **Trade tokens** - Use the Trading tab to swap ETH ↔ RES
+5. **Create tokens** - Use Token Creation tab to deploy new ERC-20 or ERC-721 contracts
 
 ## 📁 Project Structure
 
 ```
 Blockchain/
-├── contracts/              # Solidity smart contracts
-│   ├── KYCRegistry.sol    # Whitelist/blacklist management
-│   ├── RealEstateToken.sol # ERC-20 token
-│   ├── PropertyNFT.sol     # ERC-721 NFT
-│   └── interfaces/         # Uniswap V2 interfaces
-├── blockchain/             # Blockchain scripts & deployment
+├── contracts/                      # Solidity smart contracts
+│   ├── KYCRegistry.sol            # Whitelist/blacklist registry
+│   ├── RealEstateToken.sol        # ERC-20 token for property shares
+│   ├── PropertyNFT.sol            # ERC-721 for property certificates
+│   ├── SimpleTokenFactory.sol     # Token factory contract
+│   └── interfaces/                # Uniswap V2 interfaces
+├── blockchain/
 │   ├── scripts/
-│   │   ├── deploy-direct.js        # Direct deployment (ethers.js)
-│   │   └── setup-liquidity-direct.js # DEX pool setup
+│   │   ├── deploy-sepolia.js      # Deploy all contracts to Sepolia
+│   │   ├── create-pair-sepolia.js # Create Uniswap V2 pair
+│   │   ├── add-liquidity-sepolia.js # Add liquidity to pool
+│   │   └── whitelist-router.js    # Whitelist Uniswap contracts
 │   ├── test/
-│   │   └── SmartContracts.test.js  # Unit tests (10 passing)
-│   ├── deployments/        # Deployed contract addresses
-│   ├── hardhat.config.js   # Hardhat configuration
-│   └── package.json        # Hardhat dependencies
-├── backend/                # Backend services (Oracle + Indexer)
-│   ├── oracle.js          # Price oracle service (port 3001)
-│   ├── indexer.js         # Blockchain indexer (port 3002)
-│   ├── package.json       # Backend dependencies
-│   └── README.md          # Backend documentation
-├── frontend/               # React app (will be added after merge)
+│   │   └── SmartContracts.test.js # Contract unit tests
+│   ├── deployments/
+│   │   └── sepolia-latest.json    # Deployed contract addresses
+│   └── hardhat.config.js
+├── backend/
+│   ├── oracle.js                  # Price oracle service (port 3001)
+│   ├── indexer.js                 # Blockchain indexer (port 3002)
+│   └── package.json
+├── frontend/
 │   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.js
-├── .env                   # Environment variables (create this)
-├── .gitignore
-├── CONTEXT.md             # Session tracking
-└── README.md              # This file
+│   │   ├── components/            # React components
+│   │   │   ├── Portfolio.jsx      # Balance & valuation dashboard
+│   │   │   ├── TradingInterface.jsx # DEX swap interface
+│   │   │   ├── TokenCreation.jsx  # Token factory UI
+│   │   │   └── KYCStatus.jsx      # KYC checker
+│   │   ├── hooks/
+│   │   │   ├── useContracts.js    # Contract configs & ABIs
+│   │   │   └── useOracle.js       # Price oracle hook
+│   │   ├── config/
+│   │   │   └── wagmi.js           # Web3 configuration
+│   │   ├── App.jsx                # Main app component
+│   │   └── index.css              # Purple crypto theme styles
+│   ├── .env                       # Frontend environment config
+│   └── package.json
+└── README.md                      # This file
 ```
 
-## 📝 Smart Contract Architecture
-
-### KYCRegistry
-- Manages whitelist of authorized users
-- Blacklist to revoke access
-- Only owner can whitelist/blacklist
-
-### RealEstateToken (ERC-20)
-- Fungible token representing shares of a property
-- **Example property**: 123 Avenue des Champs-Élysées, Paris
-- **Value**: $500,000
-- **Supply**: 1000 tokens (1 token = 1 share)
-- Transfers blocked if sender/recipient not whitelisted
-
-### PropertyNFT (ERC-721)
-- Unique NFT representing a property certificate
-- Metadata: address, area, value, IPFS URIs
-- Transfers subject to KYC verification
-
-## 🛠️ Useful Commands
+## 🛠️ Development Commands
 
 ### Smart Contracts
-
 ```bash
 cd blockchain
 
 # Compile contracts
 npx hardhat compile
 
-# Clean artifacts
-npx hardhat clean
-
 # Run tests
 npx hardhat test
 
-# Deploy to testnet
-npm run deploy:amoy
+# Deploy to Sepolia
+node scripts/deploy-sepolia.js
 
-# Setup liquidity pool
-npm run setup-liquidity
+# Create DEX pair
+node scripts/create-pair-sepolia.js
+
+# Add liquidity
+node scripts/add-liquidity-sepolia.js
+
+# KYC Management
+node scripts/whitelist-address.js <address>  # Whitelist any address
+node scripts/whitelist-router.js            # Whitelist Uniswap contracts
 ```
 
 ### Backend Services
-
 ```bash
-# Install backend dependencies
-cd backend && npm install
-
-# Start Oracle service (port 3001)
-cd backend && npm run oracle
-
-# Start Indexer service (port 3002)
-cd backend && npm run indexer
+cd backend
 
 # Start both services
-cd backend && npm run dev
+npm run dev
+
+# Start oracle only
+npm run oracle
+
+# Start indexer only
+npm run indexer
 ```
 
-### API Endpoints
-
-**Oracle (http://localhost:3001)**
-- `GET /api/price/xrp` - XRP/USD price
-- `GET /api/price/res` - RES token price
-- `GET /api/health` - Service health
-
-**Indexer (http://localhost:3002)**
-- `GET /api/events/kyc` - KYC events
-- `GET /api/events/transfers` - Transfer events
-- `GET /api/stats` - Blockchain statistics
-- `GET /api/health` - Service health
-
-## 🏊 DEX Trading
-
-Once deployed, tokens can be traded on **QuickSwap** (Uniswap V2 fork on Polygon).
-
-### Setup liquidity:
+### Frontend
 ```bash
-npx hardhat run scripts/setup-liquidity.js --network amoy
+cd frontend
+
+# Development server
+npm run dev
+
+# Production build
+npm run build
+
+# Preview build
+npm run preview
 ```
 
-This creates a RES/WMATIC pool with:
-- Initial liquidity: 100 RES + 0.1 MATIC
-- KYC enforcement (only whitelisted can trade)
-- Whitelisted router and pair contracts
+## 🤔 Technical Choices & Architecture
 
-**Full guide**: See `docs/DEX_INTEGRATION.md`
+### Why Ethereum Sepolia?
+- ✅ Mature ecosystem with battle-tested tools (Hardhat, ethers.js)
+- ✅ Official Uniswap V2 deployment available
+- ✅ Reliable and well-documented testnet
+- ✅ Easy access to faucets for testing
+- ✅ Large developer community for support
+
+### Architecture Decisions
+1. **Smart Contracts**
+   - Solidity 0.8.20 for latest security features
+   - Modular design with separate contracts for KYC, tokens, and factory
+   - On-chain KYC enforcement for maximum security
+   - Factory pattern for easy token creation
+
+2. **Frontend**
+   - React + Vite for fast development and better DX
+   - RainbowKit + Wagmi for seamless wallet integration
+   - TailwindCSS for responsive design
+   - Real-time blockchain state updates
+
+3. **Backend Services**
+   - Lightweight Node.js services
+   - Modular architecture (oracle + indexer)
+   - REST APIs for easy integration
+   - 60-second sync intervals for optimal performance
+
+4. **Development Workflow**
+   - Hardhat for contract development
+   - Comprehensive test suite
+   - Clear deployment scripts
+   - Easy-to-use admin tools
+
+### Security Considerations
+1. **KYC System**
+   - On-chain verification for all transfers
+   - Whitelist/blacklist mechanisms
+   - Admin controls for compliance
+
+2. **Trading Security**
+   - Only whitelisted addresses can trade
+   - DEX integration with verified contracts
+   - Price oracle for fair valuations
+
+## 🌐 API Endpoints
+
+### Oracle Service (http://localhost:3001)
+- `GET /api/price/xrp` - XRP/USD price from CoinGecko
+- `GET /api/price/res` - RES token price from Uniswap V2
+- `GET /api/health` - Service health check
+
+### Indexer Service (http://localhost:3002)
+- `GET /api/events/kyc` - KYC whitelist/blacklist events
+- `GET /api/events/transfers` - RES token transfer events
+- `GET /api/stats` - Blockchain statistics
+- `GET /api/health` - Service health check
+
+## 📝 Smart Contract Details
+
+### RealEstateToken (RES)
+- **Symbol**: RES
+- **Decimals**: 18
+- **Total Supply**: 1,000 RES
+- **Property Value**: $500,000 USD
+- **Price per Token**: $500/RES (1 RES = 0.001 property ownership)
+- **Property**: 123 Main St, Paris
+- **KYC**: Required for all transfers
+
+### KYCRegistry
+- **Owner-only controls**: Only contract owner can whitelist/blacklist
+- **Whitelisted addresses**: Can send/receive RES tokens and NFTs
+- **Blacklisted addresses**: Blocked from all token operations
+- **Uniswap integration**: Router and Pair contracts whitelisted
+
+### PropertyNFT
+- **Standard**: ERC-721
+- **Use case**: Unique property certificates
+- **Metadata**: IPFS-stored (address, area, value, images)
+- **KYC**: Enforced on transfers
+
+## 🧪 Testing
+
+All smart contracts have comprehensive test coverage:
+
+```bash
+cd blockchain
+npx hardhat test
+```
+
+**Test results:**
+```
+✓ KYCRegistry: Should deploy with correct owner
+✓ KYCRegistry: Should whitelist address
+✓ KYCRegistry: Should blacklist address
+✓ RealEstateToken: Should deploy with correct name and symbol
+✓ RealEstateToken: Should mint tokens to owner
+✓ RealEstateToken: Should enforce KYC on transfers
+✓ PropertyNFT: Should deploy correctly
+✓ PropertyNFT: Should mint NFT with metadata
+✓ PropertyNFT: Should enforce KYC on transfers
+✓ Integration: Full workflow test
+
+10 passing
+```
+
+## 🔗 Deployed Contracts (Sepolia)
+
+| Contract | Address | Etherscan |
+|----------|---------|-----------|
+| KYCRegistry | `0xFfc2bd2AbC7b4e86F306F659e2Caf219744e30a2` | [View](https://sepolia.etherscan.io/address/0xFfc2bd2AbC7b4e86F306F659e2Caf219744e30a2) |
+| RealEstateToken | `0x6cBf802Ba94639Bb74E64e883D9FCb80114F17EF` | [View](https://sepolia.etherscan.io/address/0x6cBf802Ba94639Bb74E64e883D9FCb80114F17EF) |
+| PropertyNFT | `0x28304461fb1e65EDDcb8998195B47EC770A447CD` | [View](https://sepolia.etherscan.io/address/0x28304461fb1e65EDDcb8998195B47EC770A447CD) |
+| TokenFactory | `0xF62643BD23124c7f279D5f2073956039ba44699C` | [View](https://sepolia.etherscan.io/address/0xF62643BD23124c7f279D5f2073956039ba44699C) |
+| RES/WETH Pair | `0x8DB5219a28376ff2bEd277459D6845EcF115f813` | [View](https://sepolia.etherscan.io/address/0x8DB5219a28376ff2bEd277459D6845EcF115f813) |
 
 ## 👥 Team
 
-- **Victor** - Lead Blockchain (Smart Contracts, DEX, Tests)
-- **Bastien** - Lead Frontend (React/Next.js, UI/UX)
-- **Sean** - Backend/Indexer (Node.js, Oracle, API)
-- **Theo** - DevOps/QA (CI/CD, Deployment, Documentation)
+- **Victor** - Lead Blockchain Engineer (Smart Contracts, DEX, Testing)
+- **Bastien** - Frontend Developer (React, UI/UX, Web3)
+- **Sean** - Backend Developer (Oracle, Indexer, APIs)
+- **Theo** - DevOps Engineer (Deployment, CI/CD, Documentation)
 
-## 📚 Next Steps
+## 🎯 Project Goals Achieved
 
-1. ✅ ~~Implement Uniswap pool for token trading~~
-2. ⏳ Write comprehensive tests (Hardhat) - **PRIORITY**
-3. ⏳ Create indexer for blockchain synchronization - Sean
-4. ⏳ Integrate oracle for pricing - Sean
-5. ⏳ Develop frontend - Bastien
-6. ⏳ Document technical choices (Polygon justification)
+✅ Real estate asset tokenization (ERC-20 + ERC-721)
+✅ On-chain KYC compliance system
+✅ Decentralized trading via Uniswap V2
+✅ Real-time price oracle integration
+✅ Blockchain event indexer
+✅ Modern responsive web interface
+✅ Comprehensive testing suite
+✅ Full Sepolia testnet deployment
+✅ Production-ready architecture
+
+## 📚 Technical Stack
+
+- **Blockchain**: Ethereum (Sepolia testnet)
+- **Smart Contracts**: Solidity 0.8.20
+- **Development**: Hardhat
+- **Testing**: Mocha, Chai
+- **Frontend**: React, Vite, TailwindCSS
+- **Web3**: RainbowKit, Wagmi, Viem
+- **Backend**: Node.js, Express, Ethers.js
+- **DEX**: Uniswap V2
+- **Oracle**: CoinGecko API + Uniswap reserves
 
 ## 📄 License
 
@@ -303,6 +399,8 @@ ISC
 ## 🔗 Useful Links
 
 - [Hardhat Documentation](https://hardhat.org/docs)
-- [Polygon Amoy Faucet](https://faucet.polygon.technology/)
-- [Polygonscan Amoy](https://amoy.polygonscan.com/)
-- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
+- [Sepolia Testnet Faucet](https://sepoliafaucet.com/)
+- [Sepolia Etherscan](https://sepolia.etherscan.io/)
+- [Uniswap V2 Docs](https://docs.uniswap.org/contracts/v2/overview)
+- [RainbowKit](https://www.rainbowkit.com/)
+- [Wagmi](https://wagmi.sh/)

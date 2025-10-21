@@ -28,14 +28,21 @@ const database = {
 
 // Load deployment info
 function loadDeployment() {
-  const deploymentsDir = path.join(__dirname, '..', 'deployments');
+  const deploymentsDir = path.join(__dirname, '..', 'blockchain', 'deployments');
+
+  // Try to load sepolia-latest.json first, fallback to latest sepolia deployment
+  const latestPath = path.join(deploymentsDir, 'sepolia-latest.json');
+  if (fs.existsSync(latestPath)) {
+    return JSON.parse(fs.readFileSync(latestPath, 'utf8'));
+  }
+
   const files = fs.readdirSync(deploymentsDir)
-    .filter(f => f.startsWith('amoy'))
+    .filter(f => f.startsWith('sepolia'))
     .sort()
     .reverse();
 
   if (files.length === 0) {
-    throw new Error('No deployment found');
+    throw new Error('No Sepolia deployment found');
   }
 
   return JSON.parse(
@@ -46,18 +53,18 @@ function loadDeployment() {
 // Setup provider and contracts
 async function setupContracts() {
   const provider = new ethers.JsonRpcProvider(
-    process.env.AMOY_RPC_URL || 'https://rpc-amoy.polygon.technology'
+    process.env.SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com'
   );
 
   const deployment = loadDeployment();
 
   // Load ABIs
   const kycABI = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '..', 'artifacts/contracts/KYCRegistry.sol/KYCRegistry.json'), 'utf8')
+    fs.readFileSync(path.join(__dirname, '..', 'blockchain', 'artifacts', 'contracts', 'KYCRegistry.sol', 'KYCRegistry.json'), 'utf8')
   ).abi;
 
   const tokenABI = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '..', 'artifacts/contracts/RealEstateToken.sol/RealEstateToken.json'), 'utf8')
+    fs.readFileSync(path.join(__dirname, '..', 'blockchain', 'artifacts', 'contracts', 'RealEstateToken.sol', 'RealEstateToken.json'), 'utf8')
   ).abi;
 
   // Create contract instances

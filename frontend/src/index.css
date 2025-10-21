@@ -10,36 +10,132 @@ html, body, #root { height: 100%; }
     color-scheme: dark;
   }
   body {
-    @apply bg-neutral-950 text-neutral-100 antialiased;
+    @apply text-neutral-100 antialiased;
+    background: linear-gradient(135deg, #0f0c29 0%, #1a0e3e 25%, #24183f 50%, #1a0e3e 75%, #0f0c29 100%);
+    background-attachment: fixed;
   }
-  h1 { @apply text-3xl font-semibold; }
-  h2 { @apply text-xl font-semibold; }
+  h1 {
+    @apply text-3xl font-bold;
+    background: linear-gradient(135deg, #a78bfa 0%, #ec4899 50%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  h2 { @apply text-xl font-semibold text-purple-100; }
 }
 
 @layer components {
   .container-app { @apply max-w-6xl mx-auto px-4; }
-  .card { @apply rounded-lg border border-neutral-800 bg-neutral-900 shadow-card; }
+
+  /* Glassmorphism cards */
+  .card {
+    @apply rounded-xl border backdrop-blur-xl shadow-2xl;
+    background: rgba(139, 92, 246, 0.05);
+    border-color: rgba(168, 85, 247, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.1);
+  }
+
   .card-body { @apply p-4; }
-  .btn { @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors; }
-  .btn-primary { @apply bg-emerald-600 hover:bg-emerald-700 text-white; }
-  .btn-secondary { @apply bg-neutral-700 hover:bg-neutral-600 text-white; }
-  .btn-outline { @apply border border-neutral-700 text-neutral-200 hover:bg-neutral-800; }
-  .input { @apply w-full bg-neutral-800 rounded-md px-3 py-2 text-sm placeholder:text-neutral-500 outline-none border border-transparent focus:border-neutral-600; }
-  .label { @apply block text-xs text-neutral-400 mb-1; }
-  .muted { @apply text-neutral-400 text-sm; }
-  .badge { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-neutral-800 text-neutral-300 border border-neutral-700; }
-  /* Stats blocks */
-  .stat { @apply card p-4 flex items-center justify-between gap-3; }
-  .stat-title { @apply text-xs uppercase tracking-wide text-neutral-400; }
-  .stat-value { @apply text-2xl font-semibold; }
-  .stat-desc { @apply text-xs text-neutral-500; }
-  /* Top nav tabs (pill style) */
-  .tab-pill { @apply inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border shadow-sm transition-colors; }
-  .tab-active { @apply bg-blue-600 text-white border-blue-500 hover:bg-blue-700; }
-  .tab-inactive { @apply bg-white text-neutral-900 border-neutral-200 hover:bg-neutral-50; }
+
+  /* Buttons with gradient */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    @apply text-white hover:scale-105 hover:shadow-lg;
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    @apply text-white hover:scale-105;
+  }
+
+  .btn-outline {
+    @apply border text-purple-200 hover:bg-purple-900/20;
+    border-color: rgba(168, 85, 247, 0.4);
+  }
+
+  /* Input with glow */
+  .input {
+    @apply w-full rounded-lg px-3 py-2 text-sm placeholder:text-purple-400/50 outline-none border transition-all;
+    background: rgba(30, 27, 75, 0.6);
+    border-color: rgba(168, 85, 247, 0.3);
+  }
+
+  .input:focus {
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  .label { @apply block text-xs text-purple-300 mb-1 font-medium; }
+  .muted { @apply text-purple-300/70 text-sm; }
+
+  /* Badge with gradient */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+    border-color: rgba(168, 85, 247, 0.4);
+    color: #e9d5ff;
+  }
+
+  /* Stats blocks with glow */
+  .stat {
+    @apply card p-4 flex items-center justify-between gap-3;
+    background: rgba(88, 28, 135, 0.1);
+  }
+
+  .stat-title {
+    @apply text-xs uppercase tracking-wide font-semibold;
+    color: #c084fc;
+  }
+
+  .stat-value {
+    @apply text-2xl font-bold;
+    background: linear-gradient(135deg, #e9d5ff 0%, #f0abfc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-desc { @apply text-xs text-purple-300/60; }
+
+  /* Section with enhanced glass effect */
+  .section {
+    @apply card card-body;
+    background: linear-gradient(135deg, rgba(88, 28, 135, 0.15) 0%, rgba(30, 27, 75, 0.4) 100%);
+  }
+
+  /* Top nav tabs (pill style) with purple theme */
+  .tab-pill {
+    @apply inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border shadow-sm transition-all duration-200;
+  }
+
+  .tab-active {
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    @apply text-white border-purple-400;
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.5);
+  }
+
+  .tab-inactive {
+    @apply border-purple-500/30 text-purple-200 hover:bg-purple-900/20;
+    background: rgba(88, 28, 135, 0.1);
+  }
 }
 
 @layer utilities {
-  .section { @apply card card-body; }
-  .skeleton { @apply animate-pulse bg-neutral-800/80 rounded-md; }
+  .skeleton {
+    @apply animate-pulse rounded-md;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.1) 0%, rgba(168, 85, 247, 0.2) 50%, rgba(139, 92, 246, 0.1) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
 }

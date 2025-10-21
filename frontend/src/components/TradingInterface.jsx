@@ -9,18 +9,18 @@ export default function TradingInterface() {
   const { realEstateToken } = useContracts()
 
   const routerAddress = import.meta.env.VITE_UNISWAP_ROUTER
-  const wmaticAddress = import.meta.env.VITE_WMATIC_ADDRESS
-  const pairAddress = import.meta.env.VITE_RES_WMATIC_PAIR
+  const wethAddress = import.meta.env.VITE_WETH
+  const pairAddress = import.meta.env.VITE_RES_WETH_PAIR // Will be created after liquidity
 
   // State for swap form
-  const [fromToken, setFromToken] = useState('WMATIC')
+  const [fromToken, setFromToken] = useState('ETH')
   const [toToken, setToToken] = useState('RES')
   const [amount, setAmount] = useState('')
   const [quote, setQuote] = useState(null)
 
   // Get addresses based on token selection
-  const fromAddress = fromToken === 'WMATIC' ? wmaticAddress : realEstateToken.address
-  const toAddress = toToken === 'RES' ? realEstateToken.address : wmaticAddress
+  const fromAddress = fromToken === 'ETH' ? wethAddress : realEstateToken.address
+  const toAddress = toToken === 'RES' ? realEstateToken.address : wethAddress
 
   // Fetch quote from DEX
   const { data: quoteData, isLoading: quoteLoading, refetch: refetchQuote } = useReadContract({
@@ -65,8 +65,8 @@ export default function TradingInterface() {
     const deadline = Math.floor(Date.now() / 1000) + 600 // 10 min
 
     try {
-      if (fromToken === 'WMATIC') {
-        // Swap MATIC for RES
+      if (fromToken === 'ETH') {
+        // Swap ETH for RES (using WETH under the hood)
         writeContract({
           address: routerAddress,
           abi: UNISWAP_V2_ROUTER_ABI,
@@ -75,7 +75,7 @@ export default function TradingInterface() {
           value: amountIn,
         })
       } else {
-        // Swap RES for WMATIC (need approve first)
+        // Swap RES for ETH (need approve first)
         alert('⚠️ Swap token->ETH nécessite approve. Implémente approve flow!')
       }
     } catch (err) {
@@ -95,7 +95,7 @@ export default function TradingInterface() {
     <section className="section">
       <div className="flex items-center justify-between">
         <h2 className="mb-3">Trading (Swap)</h2>
-        <span className="badge">DonaSwap V2</span>
+        <span className="badge">Uniswap V2</span>
       </div>
 
       {!isConnected && (
@@ -114,7 +114,7 @@ export default function TradingInterface() {
               value={fromToken}
               onChange={(e) => setFromToken(e.target.value)}
             >
-              <option value="WMATIC">WMATIC</option>
+              <option value="ETH">ETH</option>
               <option value="RES">RES</option>
             </select>
             <input
@@ -152,10 +152,10 @@ export default function TradingInterface() {
               onChange={(e) => setToToken(e.target.value)}
             >
               <option value="RES">RES</option>
-              <option value="WMATIC">WMATIC</option>
+              <option value="ETH">ETH</option>
             </select>
             <input
-              className="input bg-neutral-900"
+              className="input"
               placeholder="0.0"
               type="text"
               value={quote || ''}
@@ -208,7 +208,7 @@ export default function TradingInterface() {
             <div className="stat-value text-sm">
               {reserves ? `${formatUnits(reserves[0], 18).slice(0, 8)}` : '—'}
             </div>
-            <div className="stat-desc">WMATIC / RES</div>
+            <div className="stat-desc">WETH / RES</div>
           </div>
         </div>
       </div>

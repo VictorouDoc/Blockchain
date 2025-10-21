@@ -1,0 +1,17 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "deployer": "0x5729471EE51FaEaF31fc093fd99E67f28429bf00",
+  "timestamp": "2025-10-19T15:38:17.387Z",
+  "contracts": {
+    "KYCRegistry": "0xFfc2bd2AbC7b4e86F306F659e2Caf219744e30a2",
+    "RealEstateToken": "0x6cBf802Ba94639Bb74E64e883D9FCb80114F17EF",
+    "PropertyNFT": "0x28304461fb1e65EDDcb8998195B47EC770A447CD",
+    "SimpleTokenFactory": "0xF62643BD23124c7f279D5f2073956039ba44699C"
+  },
+  "uniswap": {
+    "router": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+    "factory": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+    "weth": "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14"
+  }
+}
