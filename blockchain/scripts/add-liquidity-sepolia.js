@@ -23,6 +23,13 @@ const ERC20_ABI = [
   'function allowance(address owner, address spender) external view returns (uint256)',
 ];
 
+// Pair ABI (minimal)
+const PAIR_ABI = [
+  'function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)',
+  'function token0() external view returns (address)',
+  'function token1() external view returns (address)',
+];
+
 async function main() {
   console.log('💧 Ajout de liquidité sur Uniswap V2 (Sepolia)\n');
 
@@ -64,9 +71,49 @@ async function main() {
     return;
   }
 
-  // Liquidity amounts
-  const RES_AMOUNT = ethers.parseEther('100'); // 100 RES tokens
-  const ETH_AMOUNT = ethers.parseEther('0.01'); // 0.01 ETH
+  // Get pair address and check if it exists
+  const FACTORY_ABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
+  const FACTORY_ADDRESS = deployment.uniswapV2.factory;
+  const factory = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, provider);
+  const pairAddress = await factory.getPair(RES_ADDRESS, WETH_ADDRESS);
+
+  console.log('Pair Address:', pairAddress, '\n');
+
+  // If pair exists, get current reserves to calculate proper ratio
+  let RES_AMOUNT = ethers.parseEther('10'); // Default: 10 RES tokens
+  let ETH_AMOUNT = ethers.parseEther('0.001'); // Default: 0.001 ETH
+
+  if (pairAddress !== ethers.ZeroAddress) {
+    console.log('📊 Pool existe déjà, calcul du ratio optimal...\n');
+    
+    const pair = new ethers.Contract(pairAddress, PAIR_ABI, provider);
+    const [reserve0, reserve1] = await pair.getReserves();
+    const token0 = await pair.token0();
+    
+    // Determine which reserve is RES and which is WETH
+    const isToken0RES = token0.toLowerCase() === RES_ADDRESS.toLowerCase();
+    const resReserve = isToken0RES ? reserve0 : reserve1;
+    const wethReserve = isToken0RES ? reserve1 : reserve0;
+
+    console.log('Réserves actuelles du pool:');
+    console.log('  RES:', ethers.formatEther(resReserve), 'RES');
+    console.log('  WETH:', ethers.formatEther(wethReserve), 'WETH');
+    
+    // Use 80% of available ETH (keep some for gas)
+    const maxEthToUse = (balance * 80n) / 100n;
+    ETH_AMOUNT = maxEthToUse;
+    
+    // Calculate RES amount based on available ETH
+    // ratio = resReserve / wethReserve
+    // RES_AMOUNT = ETH_AMOUNT * ratio
+    RES_AMOUNT = (ETH_AMOUNT * resReserve) / wethReserve;
+    
+    console.log('\nRatio optimal calculé (basé sur ETH disponible):');
+    console.log('  Ajouter:', ethers.formatEther(RES_AMOUNT), 'RES');
+    console.log('  Ajouter:', ethers.formatEther(ETH_AMOUNT), 'ETH\n');
+  } else {
+    console.log('🆕 Nouveau pool, ratio libre\n');
+  }
 
   console.log('💧 Liquidité à ajouter:');
   console.log('  RES:', ethers.formatEther(RES_AMOUNT), 'RES');
@@ -115,12 +162,6 @@ async function main() {
   const receipt = await liquidityTx.wait();
   console.log('   ✅ Liquidité ajoutée!\n');
 
-  // Get pair address from factory (use factory address directly from deployment)
-  const FACTORY_ABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
-  const FACTORY_ADDRESS = deployment.uniswapV2.factory;
-  const factory = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, provider);
-  const pairAddress = await factory.getPair(RES_ADDRESS, WETH_ADDRESS);
-
   console.log('🎉 Succès!');
   console.log('════════════════════════════════════════════════════════════');
   console.log('Pair RES/WETH:', pairAddress);
@@ -128,9 +169,6 @@ async function main() {
   console.log(`https://sepolia.etherscan.io/address/${pairAddress}`);
   console.log(`Transaction liquidité: https://sepolia.etherscan.io/tx/${liquidityTx.hash}`);
   console.log('════════════════════════════════════════════════════════════\n');
-
-  console.log('⚙️  Mettre à jour frontend/.env:');
-  console.log(`VITE_RES_WETH_PAIR=${pairAddress}\n`);
 }
 
 main().catch(console.error);

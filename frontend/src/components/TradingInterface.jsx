@@ -17,10 +17,30 @@ export default function TradingInterface() {
   const [toToken, setToToken] = useState('RES')
   const [amount, setAmount] = useState('')
   const [quote, setQuote] = useState(null)
+  const [needsApproval, setNeedsApproval] = useState(false)
 
   // Get addresses based on token selection
   const fromAddress = fromToken === 'ETH' ? wethAddress : realEstateToken.address
   const toAddress = toToken === 'RES' ? realEstateToken.address : wethAddress
+
+  // Check RES allowance for Router (when swapping RES -> ETH)
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
+    address: realEstateToken.address,
+    abi: realEstateToken.abi,
+    functionName: 'allowance',
+    args: [address, routerAddress],
+    query: { enabled: isConnected && fromToken === 'RES' },
+  })
+
+  // Update needsApproval when allowance or amount changes
+  useEffect(() => {
+    if (fromToken === 'RES' && amount && allowance !== undefined) {
+      const amountBigInt = parseUnits(amount, 18)
+      setNeedsApproval(allowance < amountBigInt)
+    } else {
+      setNeedsApproval(false)
+    }
+  }, [fromToken, amount, allowance])
 
   // Fetch quote from DEX
   const { data: quoteData, isLoading: quoteLoading, refetch: refetchQuote } = useReadContract({
@@ -47,11 +67,40 @@ export default function TradingInterface() {
     }
   }, [quoteData])
 
-  // Swap function
+  // Swap/Approve functions
   const { writeContract, data: txHash, isPending, isError } = useWriteContract()
   const { isLoading: isTxPending, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
   })
+
+  // Refetch allowance after approval succeeds
+  useEffect(() => {
+    if (isTxSuccess && needsApproval) {
+      refetchAllowance()
+    }
+  }, [isTxSuccess, needsApproval, refetchAllowance])
+
+  const onApprove = async (e) => {
+    e.preventDefault()
+    if (!amount || parseFloat(amount) <= 0) {
+      alert('Montant invalide')
+      return
+    }
+
+    const amountToApprove = parseUnits(amount, 18)
+
+    try {
+      writeContract({
+        address: realEstateToken.address,
+        abi: realEstateToken.abi,
+        functionName: 'approve',
+        args: [routerAddress, amountToApprove],
+      })
+    } catch (err) {
+      console.error('Approve error:', err)
+      alert('Erreur approve: ' + err.message)
+    }
+  }
 
   const onSwap = async (e) => {
     e.preventDefault()
@@ -60,9 +109,24 @@ export default function TradingInterface() {
       return
     }
 
+    // Check if approval needed first
+    if (fromToken === 'RES' && needsApproval) {
+      alert('⚠️ Tu dois d\'abord approuver le Router à dépenser tes RES tokens')
+      return
+    }
+
     const amountIn = parseUnits(amount, 18)
-    const amountOutMin = quoteData ? (quoteData[1] * 995n) / 1000n : 0n // 0.5% slippage
-    const deadline = Math.floor(Date.now() / 1000) + 600 // 10 min
+    const amountOutMin = quoteData && quoteData.length > 1 ? (quoteData[1] * 98n) / 100n : 0n // 2% slippage (plus tolérant)
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 600) // 10 min
+
+    console.log('Swap params:', {
+      fromToken,
+      toToken,
+      amountIn: amountIn.toString(),
+      amountOutMin: amountOutMin.toString(),
+      path: [fromAddress, toAddress],
+      deadline: deadline.toString()
+    })
 
     try {
       if (fromToken === 'ETH') {
@@ -71,12 +135,19 @@ export default function TradingInterface() {
           address: routerAddress,
           abi: UNISWAP_V2_ROUTER_ABI,
           functionName: 'swapExactETHForTokens',
-          args: [amountOutMin, [fromAddress, toAddress], address, BigInt(deadline)],
+          args: [amountOutMin, [wethAddress, realEstateToken.address], address, deadline],
           value: amountIn,
+          gas: 300000n, // Force gas limit raisonnable
         })
       } else {
-        // Swap RES for ETH (need approve first)
-        alert('⚠️ Swap token->ETH nécessite approve. Implémente approve flow!')
+        // Swap RES for ETH (approval already checked above)
+        writeContract({
+          address: routerAddress,
+          abi: UNISWAP_V2_ROUTER_ABI,
+          functionName: 'swapExactTokensForETH',
+          args: [amountIn, amountOutMin, [realEstateToken.address, wethAddress], address, deadline],
+          gas: 300000n, // Force gas limit raisonnable
+        })
       }
     } catch (err) {
       console.error('Swap error:', err)
@@ -164,11 +235,34 @@ export default function TradingInterface() {
           </div>
         </div>
 
+        {/* Approve button (shown when swapping RES -> ETH and needs approval) */}
+        {fromToken === 'RES' && needsApproval && (
+          <button
+            type="button"
+            onClick={onApprove}
+            className="btn btn-secondary w-full"
+            disabled={!isConnected || !amount || parseFloat(amount) <= 0 || isPending || isTxPending}
+          >
+            {isPending || isTxPending ? '⏳ Approve en cours...' : '✅ Approve RES'}
+          </button>
+        )}
+
+        {/* Swap button */}
         <button
+          type="submit"
           className="btn btn-primary w-full"
-          disabled={!isConnected || !amount || parseFloat(amount) <= 0 || isPending || isTxPending}
+          disabled={
+            !isConnected || 
+            !amount || 
+            parseFloat(amount) <= 0 || 
+            isPending || 
+            isTxPending ||
+            (fromToken === 'RES' && needsApproval)
+          }
         >
-          {isPending || isTxPending ? 'Swap en cours...' : 'Swap'}
+          {isPending || isTxPending ? 'Swap en cours...' : 
+           fromToken === 'RES' && needsApproval ? '⚠️ Approve d\'abord' : 
+           'Swap'}
         </button>
 
         {isTxSuccess && (

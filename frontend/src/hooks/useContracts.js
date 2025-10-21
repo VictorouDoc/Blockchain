@@ -67,6 +67,13 @@ const ERC20_ABI = [
 
 const ERC721_ABI = [
   {
+    inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
     name: 'ownerOf',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
@@ -98,6 +105,20 @@ const ERC721_ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'to', type: 'address' },
+      { internalType: 'string', name: 'propertyAddress', type: 'string' },
+      { internalType: 'uint256', name: 'surface', type: 'uint256' },
+      { internalType: 'uint256', name: 'value', type: 'uint256' },
+      { internalType: 'string', name: 'documentURI', type: 'string' },
+      { internalType: 'string', name: 'tokenURI', type: 'string' },
+    ],
+    name: 'mintProperty',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
 ]

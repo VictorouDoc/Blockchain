@@ -1,11 +1,22 @@
 import { useState } from 'react'
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
 import { TOKEN_FACTORY_ABI } from '../config/factory-abi'
+import { useContracts } from '../hooks/useContracts'
 import { parseEther } from 'viem'
 
 export default function TokenCreation() {
   const { address, isConnected } = useAccount()
   const factoryAddress = import.meta.env.VITE_TOKEN_FACTORY_ADDRESS
+  const { propertyNft, kycRegistry } = useContracts()
+
+  // Check if user is whitelisted
+  const { data: isWhitelisted } = useReadContract({
+    address: kycRegistry.address,
+    abi: kycRegistry.abi,
+    functionName: 'isAuthorized',
+    args: address ? [address] : undefined,
+    query: { enabled: isConnected && !!address },
+  })
 
   const [form, setForm] = useState({
     name: '',
@@ -13,6 +24,11 @@ export default function TokenCreation() {
     totalSupply: '',
     nftName: '',
     nftSymbol: '',
+    // PropertyNFT mint fields
+    propertyAddress: '',
+    surface: '',
+    value: '',
+    documentURI: '',
   })
 
   const { writeContract, data: txHash, isPending, isError, error } = useWriteContract()
@@ -20,8 +36,8 @@ export default function TokenCreation() {
     hash: txHash,
   })
 
-  const [lastCreatedAddress, setLastCreatedAddress] = useState(null)
   const [lastAction, setLastAction] = useState(null) // Track which action was performed
+  const [lastCreatedAddress, setLastCreatedAddress] = useState(null)
 
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
 
@@ -81,6 +97,40 @@ export default function TokenCreation() {
       })
     } catch (err) {
       console.error('Error creating ERC721:', err)
+      alert('Erreur: ' + err.message)
+    }
+  }
+
+  const mintPropertyNFT = async (e) => {
+    e.preventDefault()
+
+    if (!isWhitelisted) {
+      alert('❌ Tu dois être whitelisté (KYC) pour minter un PropertyNFT')
+      return
+    }
+
+    if (!form.propertyAddress || !form.surface || !form.value) {
+      alert('❌ Adresse, surface et valeur requis')
+      return
+    }
+
+    try {
+      setLastAction('MINT_NFT')
+      writeContract({
+        address: propertyNft.address,
+        abi: propertyNft.abi,
+        functionName: 'mintProperty',
+        args: [
+          address, // to
+          form.propertyAddress, // propertyAddress
+          BigInt(form.surface), // surface
+          BigInt(form.value * 100), // value (en cents, ex: 500000 * 100)
+          form.documentURI || 'ipfs://QmExample', // documentURI
+          '', // tokenURI (empty for on-chain metadata)
+        ],
+      })
+    } catch (err) {
+      console.error('Error minting PropertyNFT:', err)
       alert('Erreur: ' + err.message)
     }
   }
@@ -190,6 +240,110 @@ export default function TokenCreation() {
           {isError && lastAction === 'ERC721' && (
             <div className="text-sm text-red-400 bg-red-500/10 border border-red-800 rounded-md p-3">
               ❌ Erreur: {error?.message?.slice(0, 100)}
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* Mint PropertyNFT Section */}
+      <div className="section md:col-span-2">
+        <div className="flex items-center justify-between">
+          <h2 className="mb-3">🏠 Minter un Property NFT</h2>
+          <span className="badge">{isWhitelisted ? '✅ KYC OK' : '⚠️ KYC requis'}</span>
+        </div>
+        <p className="muted mb-3">Crée un certificat de propriété NFT. Nécessite d'être whitelisté.</p>
+
+        {!isConnected && (
+          <div className="text-sm text-amber-400 bg-amber-500/10 border border-amber-800 rounded-md p-3 mb-4">
+            Connecte ton wallet pour minter un NFT
+          </div>
+        )}
+
+        {isConnected && !isWhitelisted && (
+          <div className="text-sm text-red-400 bg-red-500/10 border border-red-800 rounded-md p-3 mb-4">
+            ⚠️ Tu dois être whitelisté (KYC) pour minter un PropertyNFT
+          </div>
+        )}
+
+        <form className="grid md:grid-cols-2 gap-3" onSubmit={mintPropertyNFT}>
+          <div>
+            <label className="label">Adresse de la propriété</label>
+            <input 
+              className="input" 
+              name="propertyAddress" 
+              placeholder="123 Main St, Paris, France" 
+              value={form.propertyAddress} 
+              onChange={onChange} 
+              required 
+            />
+          </div>
+          <div>
+            <label className="label">Surface (m²)</label>
+            <input 
+              className="input" 
+              name="surface" 
+              placeholder="100" 
+              type="number" 
+              value={form.surface} 
+              onChange={onChange} 
+              required 
+            />
+          </div>
+          <div>
+            <label className="label">Valeur (USD)</label>
+            <input 
+              className="input" 
+              name="value" 
+              placeholder="500000" 
+              type="number" 
+              value={form.value} 
+              onChange={onChange} 
+              required 
+            />
+          </div>
+          <div>
+            <label className="label">Document URI (IPFS)</label>
+            <input 
+              className="input" 
+              name="documentURI" 
+              placeholder="ipfs://QmExample..." 
+              value={form.documentURI} 
+              onChange={onChange} 
+            />
+          </div>
+
+          <div className="md:col-span-2 flex gap-2">
+            <button
+              className="btn btn-primary"
+              disabled={!isConnected || !isWhitelisted || isPending || isTxPending}
+            >
+              {isPending || isTxPending ? '⏳ Minting...' : '🏠 Mint Property NFT'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={()=>setForm({ 
+                ...form, 
+                propertyAddress: '123 Crypto Street, Paris, France',
+                surface: '100',
+                value: '500000',
+                documentURI: 'ipfs://QmExample'
+              })}
+            >
+              Exemple
+            </button>
+          </div>
+
+          {isTxSuccess && lastAction === 'MINT_NFT' && (
+            <div className="md:col-span-2 text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-800 rounded-md p-3">
+              ✅ Property NFT minté avec succès ! TX: {txHash?.slice(0, 10)}...
+              <br />
+              <span className="text-xs">Vérifie ton Portfolio pour voir ton NFT</span>
+            </div>
+          )}
+          {isError && lastAction === 'MINT_NFT' && (
+            <div className="md:col-span-2 text-sm text-red-400 bg-red-500/10 border border-red-800 rounded-md p-3">
+              ❌ Erreur: {error?.message?.slice(0, 150)}
             </div>
           )}
         </form>
