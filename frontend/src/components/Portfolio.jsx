@@ -17,12 +17,13 @@ export default function Portfolio() {
     query: { enabled: isConnected && !!address && !!realEstateToken.address },
   })
 
-  // Fetch NFT count (totalMinted for simplicity, in prod should be balanceOf)
-  const { data: nftCount, isLoading: nftLoading } = useReadContract({
+  // Fetch user's NFT balance (only when connected)
+  const { data: nftBalance, isLoading: nftLoading } = useReadContract({
     address: propertyNft.address,
     abi: propertyNft.abi,
-    functionName: 'totalMinted',
-    query: { enabled: propertyNft.address !== '0x0000000000000000000000000000000000000000' },
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: { enabled: isConnected && !!address && !!propertyNft.address },
   })
 
   const formattedResBalance = resBalance ? formatUnits(resBalance, 18) : '0'
@@ -52,8 +53,9 @@ export default function Portfolio() {
           <div>
             <div className="stat-title">NFTs</div>
             <div className="stat-value">
-              {nftLoading && <span className="skeleton inline-block h-5 w-16" />}
-              {!nftLoading && (nftCount?.toString() || '0')}
+              {!isConnected && '—'}
+              {isConnected && nftLoading && <span className="skeleton inline-block h-5 w-16" />}
+              {isConnected && !nftLoading && (nftBalance?.toString() || '0')}
             </div>
             <div className="stat-desc">Property Certificates</div>
           </div>

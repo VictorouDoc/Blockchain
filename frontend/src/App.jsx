@@ -38,7 +38,7 @@ function App() {
 
       <main className="container-app py-6 space-y-6">
         <WalletConnect />
-        {activeTab === 'portfolio' && <Portfolio />}
+  {activeTab === 'portfolio' && <Portfolio />}
         {activeTab === 'token' && <TokenCreation />}
         {activeTab === 'trade' && <TradingInterface />}
         {activeTab === 'kyc' && <KYCStatus />}
