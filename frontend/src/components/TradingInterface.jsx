@@ -36,7 +36,17 @@ export default function TradingInterface() {
   useEffect(() => {
     if (fromToken === 'RES' && amount && allowance !== undefined) {
       const amountBigInt = parseUnits(amount, 18)
-      setNeedsApproval(allowance < amountBigInt)
+      const needsApprove = allowance < amountBigInt
+      setNeedsApproval(needsApprove)
+
+      // Debug log
+      console.log('🔍 Approve check:', {
+        fromToken,
+        amount,
+        allowance: allowance.toString(),
+        amountBigInt: amountBigInt.toString(),
+        needsApproval: needsApprove
+      })
     } else {
       setNeedsApproval(false)
     }
@@ -87,7 +97,12 @@ export default function TradingInterface() {
       return
     }
 
-    const amountToApprove = parseUnits(amount, 18)
+    // Approve MAX amount to avoid having to re-approve each time
+    // MaxUint256 = 2^256 - 1 (unlimited approval)
+    const MAX_UINT256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+    const amountToApprove = MAX_UINT256
+
+    console.log('📝 Approving unlimited amount for Router:', routerAddress)
 
     try {
       writeContract({
@@ -234,6 +249,13 @@ export default function TradingInterface() {
             />
           </div>
         </div>
+
+        {/* Debug info for allowance (dev mode) */}
+        {fromToken === 'RES' && amount && allowance !== undefined && (
+          <div className="text-xs text-gray-400 bg-gray-800/50 border border-gray-700 rounded-md p-2 mb-2">
+            🔍 Debug: Allowance = {formatUnits(allowance, 18)} RES | Besoin approve: {needsApproval ? 'OUI' : 'NON'}
+          </div>
+        )}
 
         {/* Approve button (shown when swapping RES -> ETH and needs approval) */}
         {fromToken === 'RES' && needsApproval && (
