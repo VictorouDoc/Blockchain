@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: backend
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    volumes:
+      - ./backend:/app
+    environment:
+      NODE_ENV: production
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    environment:
+      VITE_ORACLE_BASE_URL: "http://localhost:3001"
+      VITE_INDEXER_BASE_URL: "http://localhost:3002"
+    restart: always
