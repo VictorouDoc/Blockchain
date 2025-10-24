@@ -7,7 +7,8 @@
     "oracle": "node oracle.js",
     "indexer": "node indexer.js",
     "dev": "concurrently \"npm run oracle\" \"npm run indexer\"",
-    "start": "node oracle.js"
+    "start": "node oracle.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --runInBand --detectOpenHandles"
   },
   "keywords": [
     "oracle",

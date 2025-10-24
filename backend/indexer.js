@@ -272,3 +272,13 @@ async function start() {
 }
 
 start().catch(console.error);
+
+export {
+  loadDeployment,
+  setupContracts,
+  indexKYCEvents,
+  indexTransferEvents,
+  syncBlockchain,
+  app,
+  database
+};
