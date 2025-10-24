@@ -154,4 +154,13 @@ async function start() {
   });
 }
 
-start().catch(console.error);
+if (process.env.NODE_ENV !== 'test') {
+  start().catch(console.error);
+}
+
+export {
+  fetchXRPPrice,
+  calculateRESPrice,
+  app,
+  priceCache
+};
