@@ -67,7 +67,7 @@ This platform enables:
 - ✅ **Integration tests** for end-to-end workflows
 - ✅ **Manual testing** completed on Sepolia testnet
 
-## 🚀 Quick Start
+## 🚀 Quick Start for developpers
 
 ### Prerequisites
 - Node.js v18+
@@ -394,6 +394,13 @@ npx hardhat test
 - **Backend**: Node.js, Express, Ethers.js
 - **DEX**: Uniswap V2
 - **Oracle**: CoinGecko API + Uniswap reserves
+
+## Epitech Student
+
+Beware of taking this code, do not use everything just get the implementations and re-do everything yourself.
+
+We got 96/100
+
 
 ## 📄 License
 
